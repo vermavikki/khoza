@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User profile: only readable and writable by the authenticated owner
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User private search history subcollection
+      match /search_history/{historyId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // User private bookmarks subcollection
+      match /bookmarks/{bookmarkId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Public search cache: Read-only for app clients; Write restricted to privileged Firebase Admin SDK
+    match /search_cache/{cacheKey} {
+      allow read: if true;
+      allow write: if false; // Privileged server-side Admin SDK / Cloud Functions only
+    }
+
+    // Public trending queries: Read-only for clients
+    match /trending_queries/{trendId} {
+      allow read: if true;
+      allow write: if false; // Scheduled Cloud Function maintenance only
+    }
+
+    // Feedback collection: Create-only with validated rating schema
+    match /search_feedback/{feedbackId} {
+      allow create: if request.resource.data.rating is int 
+                    && request.resource.data.rating >= 1 
+                    && request.resource.data.rating <= 5;
+      allow read, update, delete: if false;
+    }
+  }
+}

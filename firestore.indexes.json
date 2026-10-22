@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "search_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "searchedAt", "order": "DESCENDING" },
+        { "fieldPath": "language", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "search_cache",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "trending_queries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "popularityScore", "order": "DESCENDING" },
+        { "fieldPath": "expiresAt", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
